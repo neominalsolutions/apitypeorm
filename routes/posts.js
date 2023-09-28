@@ -47,9 +47,12 @@ router.post('/', async (req,res) => {
   let postDto = {... req.body, comments:[{by:'ali', text:'yorum-1'},{by:'can', text:'yorum-2'}]};
   
 
-  const response = await PostRepo.save(postDto);
+  PostRepo.save(postDto).then(response => {
+    console.log('response', response);
+    res.status(201).json(response); // createdResults
+  });
   
-  res.status(201).json(response); // createdResults
+
 })
 
 
@@ -65,7 +68,9 @@ router.get('/:id',async (req,res) => {
     res.status(404).send();
   } else {
 
-    const response2 =  await PostRepo.findOne({where:{id:req.params.id.toString()}, relations:['comments']});
+    const id = req.params.id;
+
+    const response2 =  await PostRepo.find({where:{id}, relations:['comments']});
     console.log('response2', response2);
 
     // const response =  await PostRepo.find({where:{id:req.params.id}, relations:'comments'})

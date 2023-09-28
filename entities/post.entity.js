@@ -1,26 +1,24 @@
 const { EntitySchema } = require("typeorm");
 
 
-const PostEntity = new EntitySchema({
-  name:'post',
-  tableName:'posts',
-  columns:{
-    id:{ primary:true, generated:'increment', type:'integer' },
-    title:{type:'varchar', length:50},
-    body:{type:'varchar', length:200}
+const Post = new EntitySchema({
+  name: 'Post',
+  tableName: 'post',
+  columns: {
+    id:{primary:true, generated:'uuid', type:'uuid' },
+    title:{type:'varchar', unique:true, length:50  },
+    body:{type:'varchar', length:200},
+    createdAt: { type:'timestamp',default: new Date().toISOString()}
   },
-  relations: {
-    comments: { // realation key
-      type:'one-to-many', // one-to-one oner-to-many many-to-one many-to-many bu typeları destekler. 
-      // çokaçok ilişkilerde ara tabloyu kendisi generate eder.
-      target:'comment', // karşı taraftaki entity name alanı
-      joinTable:true,
-      cascade:true, // root kayıt silindiğinde alt tablodaki kayıtlarıda müdehale etmek için açtık
+  relations:{
+    comments: {
+      type:'one-to-many',
+      target:'Comment',
+      cascade:true, // root child ilişkisi varsa alt ilişkilerine insert yapmak için,
       onDelete:'CASCADE',
-      inverside:'post' // comments post ile ilişkilidir. commentin post'unu getir.
-      // karşı entity deki relation ismi
-    }
-  }
+      joinTable:true,
+      inverseSide:'post' // her iki tarafa ilişki alanlarını yazıyoruz
+    }}
 });
 
-module.exports = PostEntity;
+module.exports = Post;

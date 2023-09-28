@@ -8,8 +8,7 @@ const UserEntity = new EntitySchema({
   username: { type:'varchar', unique: true, length:50},
   password: {type:'varchar', length:12},
   createdAt: {type:'timestamp', default:new Date().toISOString()}
- },
- relations:{}
+ }
 })
 
 
