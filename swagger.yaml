@@ -1,0 +1,139 @@
+openapi: 3.0.0
+info:
+  title: Sample API
+  description: Optional multiline or single-line description in HTML.
+  version: 0.1.9
+servers:
+  - url: http://localhost:3000
+    description: Optional server description, e.g. Main (production) server
+  - url: http://localhost:3001
+    description: Optional server description, e.g. Internal staging server for testing
+components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: Bearer
+      bearerFormat: JWT
+  schemas:
+    TokenResponseDto:
+      type: Object
+      required: true
+      properties:
+        accessToken:
+          type: string
+          description: JWT TOKEN
+        exp:
+          type: date
+          description: TokenExpire Date
+        type:
+          type: string
+          description: JWT
+    TokenRequestDto:
+      type: Object
+      required: true
+      properties:
+        username:
+          type: string
+          description: username
+        password:
+          type: string
+          description: password
+      example:
+        username: ali
+        password: 1234
+    PostDto:
+      type: Object
+      required: true
+      properties:
+        title:
+          type: string
+          description: makale başlık
+        body:
+          type: string
+          description: makale içerik
+      example:
+        title: Makale1
+        body: Makale İçerik
+paths:
+  /api/tokens:
+    post:
+      summary: Create Token
+      tags: [Tokens]
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRequestDto'
+      responses:
+        200:
+          description: The created JWT.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponseDto'
+  /api/posts:
+    get:
+      summary: get all posts
+      tags: [Posts]
+      parameters: []
+      security:
+      - bearerAuth: []  
+      responses:
+        200:
+          description: Get All Posts.
+          content:
+            application/json:
+              schema:
+                type: array
+    post:
+      summary: Create a new post
+      tags: [Posts]
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostDto'
+      responses:
+        201:
+          description: The created book.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostDto'
+  /api/posts/{id}: # dinamik path tanımı
+    get:
+      summary: get a post
+      tags: [Posts]
+      parameters:
+      - in: path
+        name: id   # Note the name is the same as in the path
+        required: true
+        schema:
+          type: string
+        minimum: 1
+        description: The makale ID
+      # - in: query
+      #   name: name   # Note the name is the same as in the path
+      #   required: false
+      #   schema:
+      #     type: string
+      #   minimum: 1
+      #   description: The makale name
+      # - in: header
+      #   name: x-client   # Note the name is the same as in the path
+      #   required: false
+      #   schema:
+      #     type: string
+        minimum: 1
+        description: The makale x-client
+      responses:
+        200:
+          description: Get All Posts.
+          content:
+            application/json:
+              schema:
+                type: object

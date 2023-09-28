@@ -1,0 +1,26 @@
+{
+  "name": "apisample",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start-dev": "SET NODE_ENV=development && nodemon ./bin/www -e js,yaml",
+    "start-prod": "SET NODE_ENV=production && nodemon ./bin/www -e js,yaml",
+    "start-staging": "SET NODE_ENV=staging && nodemon ./bin/www -e js,yaml",
+    "build-dev": "SET NODE_ENV=development && npm build ./bin/www -e js,yaml"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "dotenv": "^16.3.1",
+    "express": "~4.16.1",
+    "express-jwt": "^8.4.1",
+    "http-errors": "^2.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "moment": "^2.29.4",
+    "morgan": "~1.9.1",
+    "pg": "^8.11.3",
+    "swagger-ui-express": "^5.0.0",
+    "typeorm": "^0.3.17",
+    "yamljs": "^0.3.0"
+  }
+}
