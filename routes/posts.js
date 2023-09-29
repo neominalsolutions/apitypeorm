@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 var { expressjwt: jwt } = require("express-jwt");
-const PostEntity = require('../entities/post.entity');
+const Post = require('../entities/post.entity');
 const db = require('../database/db');
-const PostRepo = db.getRepository(PostEntity);
+const PostRepo = db.getRepository(Post);
 
 
 // HTTP Verbs => HTTPGET / api/blogs/1
@@ -98,11 +98,16 @@ router.patch('/:id', (req,res) => {
   }
 })
 
-router.delete('/:id', (req,res) => {
+router.delete('/:id', async (req,res) => {
   console.log('id', req.params.id);
   if(req.params.id == undefined){
     res.status(404).send();
   } else {
+
+    // post silinince cascade olduğundan commentlerde silinecektir.
+    const delRes = await PostRepo.delete({id: req.params.id});
+    console.log('delRes', delRes);
+
     res.status(204).send();
   }
 })

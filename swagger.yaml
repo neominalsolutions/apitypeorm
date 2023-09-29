@@ -137,3 +137,23 @@ paths:
             application/json:
               schema:
                 type: object
+    delete:
+      summary: delete a post
+      tags: [Posts]
+      parameters:
+      - in: path
+        name: id   # Note the name is the same as in the path
+        required: true
+        schema:
+          type: string
+        minimum: 1
+        description: The makale ID
+        minimum: 1
+        description: The makale Id
+      responses:
+        204:
+          description: Get All Posts.
+          content:
+            application/json:
+              schema:
+                type: object
