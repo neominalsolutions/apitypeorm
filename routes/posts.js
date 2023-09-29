@@ -1,11 +1,11 @@
 const express = require('express');
+// eslint-disable-next-line new-cap
 const router = express.Router();
-var { expressjwt: jwt } = require("express-jwt");
+const {expressjwt: jwt} = require('express-jwt');
 const Post = require('../entities/post.entity');
 const db = require('../database/db');
 const getSecret = require('../helpers/jwt.secret');
 const PostRepo = db.getRepository(Post);
-
 
 // HTTP Verbs => HTTPGET / api/blogs/1
 // HTTPGET Config amaçlı gönderimlerde /api/blogs HEADER Accept-Language=en
@@ -20,9 +20,9 @@ const PostRepo = db.getRepository(Post);
 // 400 Bad Request
 // 401 UnAuthorized (JWT AccessToken yoksa)
 // 403 Forbiden (Yetkisi yok.)
-// 404 NotFound kaynak bulunamadı hatası 
+// 404 NotFound kaynak bulunamadı hatası
 
-// VERBS => POST, PUT, PATCH (embeded dokuman modifiye işleminde), DELETE, 
+// VERBS => POST, PUT, PATCH (embeded dokuman modifiye işleminde), DELETE,
 
 // Sample Endpoints
 // api/blogs GET
@@ -33,85 +33,73 @@ const PostRepo = db.getRepository(Post);
 // api/blogs/id/addComment PATCH (Nested Endpoint) api/comments POST
 // api/blogs/id/comments GET
 
-router.get('/', jwt({secret:getSecret(),algorithms:['HS512']}), (req,res) => {
+router.get('/', jwt({secret: getSecret(), algorithms: ['HS512']}), (req, res) => {
+	console.log('get');
+	res.status(200).json([]);
+});
 
+router.post('/', async (req, res) => {
+	console.log('req.body', req.body);
 
+	// Post ile birlikte post comment değerleri save edebiliyor muyuz.
+	const postDto = {...req.body, comments: [{by: 'ali', text: 'yorum-1'}, {by: 'can', text: 'yorum-2'}]};
 
-  console.log('get');
-  res.status(200).json([]);
-})
+	PostRepo.save(postDto).then(response => {
+		console.log('response', response);
+		res.status(201).json(response); // CreatedResults
+	});
+});
 
-router.post('/', async (req,res) => {
-  console.log('req.body', req.body);
+router.get('/:id', async (req, res) => {
+	// Parameteres okumak için aşağıdaki gibi tanımlarız.
+	// parametre karşılama.
+	console.log('id', req.params.id);
+	console.log('headers', req.headers['x-client']);
+	console.log('queries', req.query.name);
 
-  // post ile birlikte post comment değerleri save edebiliyor muyuz.
-  let postDto = {... req.body, comments:[{by:'ali', text:'yorum-1'},{by:'can', text:'yorum-2'}]};
-  
+	if (req.params.id === undefined) {
+		res.status(404).send();
+	} else {
+		const {id} = req.params;
 
-  PostRepo.save(postDto).then(response => {
-    console.log('response', response);
-    res.status(201).json(response); // createdResults
-  });
-  
+		const response2 = await PostRepo.find({where: {id}, relations: ['comments']});
+		console.log('response2', response2);
 
-})
+		// Const response =  await PostRepo.find({where:{id:req.params.id}, relations:'comments'})
 
+		res.status(200).json(response2);
+	}
+});
 
-router.get('/:id',async (req,res) => {
-  // parameteres okumak için aşağıdaki gibi tanımlarız.
-  // parametre karşılama.
-  console.log('id', req.params.id);
-  console.log('headers', req.headers['x-client']);
-  console.log('queries', req.query['name']);
+router.put('/:id', (req, res) => {
+	const dto = {...req.body};
+	const {id} = req.params;
+	console.log('id', id);
+	console.log('dto', dto);
 
+	res.status(204).send();
+});
 
-  if(req.params.id == undefined){
-    res.status(404).send();
-  } else {
+router.patch('/:id', (req, res) => {
+	console.log('id', req.params.id);
+	if (req.params.id === undefined) {
+		res.status(404).send();
+	} else {
+		res.status(204).send();
+	}
+});
 
-    const id = req.params.id;
+router.delete('/:id', async (req, res) => {
+	console.log('id', req.params.id);
+	if (req.params.id === undefined) {
+		res.status(404).send();
+	} else {
+		// Post silinince cascade olduğundan commentlerde silinecektir.
+		const delRes = await PostRepo.delete({id: req.params.id});
+		console.log('delRes', delRes);
 
-    const response2 =  await PostRepo.find({where:{id}, relations:['comments']});
-    console.log('response2', response2);
-
-    // const response =  await PostRepo.find({where:{id:req.params.id}, relations:'comments'})
-
-    res.status(200).json(response2);
-  }
-})
-
-
-router.put('/:id', (req,res) => {
-  const dto = {... req.body};
-  const id = req.params.id;
-  console.log('id', id);
-  console.log('dto', dto);
-
-  res.status(204).send();
-})
-
-router.patch('/:id', (req,res) => {
-  console.log('id', req.params.id);
-  if(req.params.id == undefined){
-    res.status(404).send();
-  } else {
-    res.status(204).send();
-  }
-})
-
-router.delete('/:id', async (req,res) => {
-  console.log('id', req.params.id);
-  if(req.params.id == undefined){
-    res.status(404).send();
-  } else {
-
-    // post silinince cascade olduğundan commentlerde silinecektir.
-    const delRes = await PostRepo.delete({id: req.params.id});
-    console.log('delRes', delRes);
-
-    res.status(204).send();
-  }
-})
-
+		res.status(204).send();
+	}
+});
 
 module.exports = router;
