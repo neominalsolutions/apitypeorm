@@ -16,8 +16,15 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const postsRouter = require('./routes/posts');
 const tokensRouter = require('./routes/tokens');
-
+const cors = require('cors');
 const app = express();
+
+// GET ve POST defaultda cors üzerinden engellenmez.
+// PUT DELETE isteklerini cors ile engelleyebiliriz.
+// allowedHeaders ise client göndereceği headerlerı kısıtmamış olduk.
+// Kısıtlanmamsı gereken Headers Authorization, Content-Type
+app.use(cors({origin: 'http://127.0.0.1:5500', methods: ['GET', 'POST'], allowedHeaders: ['Content-Type', 'Authorization']}));
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
@@ -28,12 +35,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // routedan önce api-docs dosyasını tanıtalım
 
-if (process.env.NODE_ENV === 'development') {
-	const YAML = require('yamljs');
-	const swaggerDocument = YAML.load('./swagger.yaml');
-	const swaggerUi = require('swagger-ui-express');
-	app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-}
+// if (process.env.NODE_ENV === 'development') {
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load('./swagger.yaml');
+const swaggerUi = require('swagger-ui-express');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// }
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
