@@ -6,6 +6,7 @@ const Post = require('../entities/post.entity');
 const db = require('../database/db');
 const getSecret = require('../helpers/jwt.secret');
 const PostRepo = db.getRepository(Post);
+const {postDetailLimiter} = require('../rate-limits/post.rate.limitter');
 
 // HTTP Verbs => HTTPGET / api/blogs/1
 // HTTPGET Config amaçlı gönderimlerde /api/blogs HEADER Accept-Language=en
@@ -50,7 +51,7 @@ router.post('/', async (req, res) => {
 	});
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', postDetailLimiter, async (req, res) => {
 	// Parameteres okumak için aşağıdaki gibi tanımlarız.
 	// parametre karşılama.
 	console.log('id', req.params.id);
