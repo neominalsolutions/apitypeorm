@@ -39,9 +39,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 const YAML = require('yamljs');
 const swaggerDocument = YAML.load('./swagger.yaml');
 const swaggerUi = require('swagger-ui-express');
+const {default: helmet} = require('helmet');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // }
 
+app.use(helmet());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/api/posts', postsRouter);
