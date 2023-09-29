@@ -6,7 +6,8 @@
     "start-dev": "SET NODE_ENV=development && nodemon ./bin/www -e js,yaml",
     "start-prod": "SET NODE_ENV=production && nodemon ./bin/www -e js,yaml",
     "start-staging": "SET NODE_ENV=staging && nodemon ./bin/www -e js,yaml",
-    "build-dev": "SET NODE_ENV=development && npm build ./bin/www -e js,yaml"
+    "build": "SET NODE_ENV=production && webpack",
+    "prod": "node dist/index.js"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -22,5 +23,9 @@
     "swagger-ui-express": "^5.0.0",
     "typeorm": "^0.3.17",
     "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
   }
 }

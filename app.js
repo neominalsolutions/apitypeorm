@@ -16,9 +16,13 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var postsRouter = require('./routes/posts');
 var tokensRouter = require('./routes/tokens');
-const YAML = require('yamljs');
-const swaggerDocument = YAML.load('./swagger.yaml');
-const swaggerUi = require('swagger-ui-express');
+
+if(process.env.NODE_ENV === 'development') {
+  const YAML = require('yamljs');
+  const swaggerDocument = YAML.load('./swagger.yaml');
+  const swaggerUi = require('swagger-ui-express');
+}
+
 
 var app = express();
 app.use(logger('dev'));
@@ -30,7 +34,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 // import swaggerDocument from './swagger.json';
 
 // routedan önce api-docs dosyasını tanıtalım
-app.use('/api-docs', swaggerUi.serve,   swaggerUi.setup(swaggerDocument));
+
+if(process.env.NODE_ENV === 'development') {
+  app.use('/api-docs', swaggerUi.serve,   swaggerUi.setup(swaggerDocument));
+}
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

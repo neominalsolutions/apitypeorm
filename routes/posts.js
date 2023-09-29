@@ -3,6 +3,7 @@ const router = express.Router();
 var { expressjwt: jwt } = require("express-jwt");
 const Post = require('../entities/post.entity');
 const db = require('../database/db');
+const getSecret = require('../helpers/jwt.secret');
 const PostRepo = db.getRepository(Post);
 
 
@@ -32,7 +33,7 @@ const PostRepo = db.getRepository(Post);
 // api/blogs/id/addComment PATCH (Nested Endpoint) api/comments POST
 // api/blogs/id/comments GET
 
-router.get('/', jwt({secret:process.env.JWT_KEY,algorithms:['HS512']}), (req,res) => {
+router.get('/', jwt({secret:getSecret(),algorithms:['HS512']}), (req,res) => {
 
 
 
