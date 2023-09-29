@@ -8,10 +8,10 @@ const db = new DataSource({
   synchronize:true, // model değişiklikleri dbye otomatik olarak eşlenmsin mi
   entities:[UserEntity,CommentEntity,PostEntity],
   port:5432,
-  host:'localhost',
-  username:'postgres',
-  password:'admin',
-  database:'TypeOrmDb'
+  host:process.env.DB_HOST,
+  username:process.env.DB_USERNAME,
+  password:process.env.DB_PASSWORD,
+  database:process.env.DATABASE
 })
 
 db.initialize().then(()=> {
